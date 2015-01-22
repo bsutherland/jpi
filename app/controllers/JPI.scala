@@ -10,8 +10,6 @@ import play.api.Play.current
 import com.typesafe.plugin.RedisPlugin
 import play.api.cache.Cache
 import play.api.libs.json._
-//import org.json4s.NoTypeHints
-//import org.json4s.jackson.Serialization
 
 object JPI extends Controller {
 
@@ -23,10 +21,18 @@ object JPI extends Controller {
   final val PostalCodeMax = 9999999
   final val PostalCodeFmt = "%07d"
 
-  def fmt(postalCode: Integer) : String = {
-    PostalCodeFmt.format(postalCode)
-  }
+  final val CSVFields = List(
+    ("prefecture_kana", 3),
+    ("municipality_kana", 4),
+    ("neighbourhood_kana", 5),
+    ("prefecture_kanji", 6),
+    ("municipality_kanji", 7),
+    ("neighbourhood_kanji", 8)
+  )
 
+  /**
+   Lookup a numeric postal code in the Redis cache
+  */
   def lookup(postalCode: Integer) = Action {
     if (postalCode < PostalCodeMin || postalCode > PostalCodeMax) {
       NotFound(
@@ -38,7 +44,7 @@ object JPI extends Controller {
       val json: Option[String] = Cache.getAs[String](postalCode.toString)
       json match {
         case None => NotFound("Postal code not found")
-        case Some(j) => Ok(j).as("application/json")
+        case Some(j) => Ok(j)
       }
     }
   }
@@ -51,42 +57,45 @@ object JPI extends Controller {
     - Inserts JSON objects into Redis hash
    */
   def buildCache() = Action {
-    val inStream = new ZipInputStream(new URL(TestURI).openStream())
-    val csvFile = inStream.getNextEntry
-    if (null != csvFile) {
-      val reader = new BufferedReader(new InputStreamReader(inStream, CSVEncoding))
-      var line = reader.readLine()
-      //implicit val formats = Serialization.formats(NoTypeHints)
-      while (line != null) {
-        val elements = line.split(",")
-        val code = stripQuotes(elements(2))
-        //Cache.set(code, Serialization.write(parseCSVRow(elements)))
-        Cache.set(code, parseCSVRow(elements).toString)
-        line = reader.readLine()
+    val inStream = new ZipInputStream(new URL(TestURI).openStream)
+    val csvFile = Option(inStream.getNextEntry)
+    csvFile match {
+      case Some(f) => {
+        val reader = new BufferedReader(new InputStreamReader(inStream, CSVEncoding))
+        for (line <- Iterator.continually(Option(reader.readLine)).takeWhile(!_.isEmpty)) {
+          val elements = line.get.split(",")
+          val code = stripQuotes(elements(2))
+          Cache.set(code, parseCSVRow(elements).toString) 
+        }
+        Ok("Cache rebuilt")
       }
-      Ok("Cache rebuilt")
-    } else {
-      InternalServerError("Cache rebuild failed")
+      case None => InternalServerError("Cache rebuild failed")
     }
   }
 
+  /**
+    Format a numeric postal code as a String
+  */
+  private def fmt(postalCode: Integer) : String = {
+    PostalCodeFmt.format(postalCode)
+  }
+
+  /**
+    Strip trailing and leading quotes from a String
+  */
   private def stripQuotes(s : String) : String = {
     s.stripPrefix("\"").stripSuffix("\"")
   }
 
+  /**
+    Parse and convert a CSV row into a JSON object according to mapping in CSVFields
+  */
   private def parseCSVRow(row : Array[String]) : JsObject = {
-    //row.foreach(stripQuotes)
-    var r = row map { stripQuotes(_) }
-    return Json.obj(
-      "prefecture_kana" -> r(3),
-      "municipality_kana" -> r(4),
-      "neighbourhood_kana" -> r(5),
-      "prefecture_kanji" -> r(6),
-      "municipality_kanji" -> r(7),
-      "neighbourhood_kanji" -> r(8)
-    )
+    var strippedRow = row map { stripQuotes(_) }
+    var fields = CSVFields map {
+      f => f._1 -> Json.toJsFieldJsValueWrapper(strippedRow(f._2))
+    }
+    Json.obj( fields: _* )
   }
-
-
 
 }
