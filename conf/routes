@@ -1,0 +1,5 @@
+GET     /:postalCode                controllers.JPI.lookup(postalCode: Integer)
+
+POST    /rebuild					controllers.JPI.buildCache()
+
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
