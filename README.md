@@ -14,15 +14,13 @@ Zipped CSV file from the [Japan Post website](http://www.post.japanpost.jp/zipco
 
 ### GET /*{postal_code}*
 
-**Content Type** application/json
+**Content Type** application/json; charset=utf-8
 
 **Character Encoding** UTF-8
 
 **Response** 200 OK
 
-**Errors**
-
-404 Not Found - Invalid postal code, or postal code does not exist.
+**Errors** 404 Not Found - Invalid postal code, or postal code does not exist.
 
 **Typical Response**
 
@@ -37,14 +35,10 @@ Zipped CSV file from the [Japan Post website](http://www.post.japanpost.jp/zipco
 }
 ```
 
-
-
 ### POST /rebuild
 
 Download zipped CSV list of postal codes and update the data store. In production this URL should be accessible by administrators only.
 
 **Response** 200 OK
 
-**Errors**
-
-500 Internal Server Error - Something went wrong while attempting to download, extract, parse or insert the data.
+**Errors** 500 Internal Server Error - Something went wrong while attempting to download, extract, parse or insert the data.
