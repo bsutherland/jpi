@@ -11,4 +11,8 @@ libraryDependencies ++= Seq(
   "org.json4s" %% "json4s-jackson" % "3.2.11"
 )
 
+import de.johoop.cpd4sbt.CopyPasteDetector._
+
+cpdSettings
+
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
