@@ -1,15 +1,21 @@
 package controllers
 
-import play.api.mvc._
+// Scala imports
+import util.control.Breaks._
 
+// Play imports
+import play.api.mvc._
+import play.api.Play.current
+import play.api.cache.Cache
+import play.api.libs.json._
+import com.typesafe.plugin.RedisPlugin
+
+// Java imports
 import java.io.{BufferedReader, InputStreamReader}
 import java.net.URL
 import java.util.zip.ZipInputStream
 
-import play.api.Play.current
-import com.typesafe.plugin.RedisPlugin
-import play.api.cache.Cache
-import play.api.libs.json._
+
 
 object JPI extends Controller {
 
@@ -63,9 +69,11 @@ object JPI extends Controller {
       case Some(f) => {
         val reader = new BufferedReader(new InputStreamReader(inStream, CSVEncoding))
         for (line <- Iterator.continually(Option(reader.readLine)).takeWhile(!_.isEmpty)) {
-          val elements = line.get.split(",")
-          val code = stripQuotes(elements(2))
-          Cache.set(code, parseCSVRow(elements).toString) 
+          breakable {
+            val elements = line.getOrElse(break).split(",")
+            val code = stripQuotes(elements(2))
+            Cache.set(code, parseCSVRow(elements).toString)
+          }
         }
         Ok("Cache rebuilt")
       }
@@ -91,8 +99,8 @@ object JPI extends Controller {
     Parse and convert a CSV row into a JSON object according to mapping in CSVFields
   */
   private def parseCSVRow(row : Array[String]) : JsObject = {
-    var strippedRow = row map { stripQuotes(_) }
-    var fields = CSVFields map {
+    val strippedRow = row map { stripQuotes(_) }
+    val fields = CSVFields map {
       f => f._1 -> Json.toJsFieldJsValueWrapper(strippedRow(f._2))
     }
     Json.obj( fields: _* )

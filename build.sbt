@@ -2,6 +2,8 @@ name := "jpi"
 
 version := "1.0.0-SNAPSHOT"
 
+scalaVersion := "2.11.5"
+
 resolvers += "Sedis repository" at "http://pk11-scratch.googlecode.com/svn/trunk/"
 
 libraryDependencies ++= Seq(
