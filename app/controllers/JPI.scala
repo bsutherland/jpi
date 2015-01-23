@@ -50,7 +50,7 @@ object JPI extends Controller {
       val json: Option[String] = Cache.getAs[String](postalCode.toString)
       json match {
         case None => NotFound("Postal code not found")
-        case Some(j) => Ok(j)
+        case Some(j) => Ok(j).as("application/json; charset=utf-8")
       }
     }
   }
@@ -72,7 +72,7 @@ object JPI extends Controller {
           breakable {
             val elements = line.getOrElse(break).split(",")
             val code = stripQuotes(elements(2))
-            Cache.set(code, parseCSVRow(elements).toString)
+            Cache.set(code, Json.stringify(parseCSVRow(elements)))
           }
         }
         Ok("Cache rebuilt")
