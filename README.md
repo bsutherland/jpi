@@ -12,7 +12,7 @@ Zipped CSV file from the [Japan Post website](http://www.post.japanpost.jp/zipco
 
 ## API
 
-### GET /*<postal_code>*
+### GET /*{postal_code}*
 
 **Content Type** application/json
 
