@@ -4,7 +4,7 @@ API for looking up Japanese addresses by postal code. Useful for filling out for
 
 ## Data Store
 
-Redis, via the [plugin for the Play framework](https://github.com/typesafehub/play-plugins/tree/master/redis)
+Data is loaded into the Play cache at application startup.
 
 ## Source Data
 
@@ -34,11 +34,3 @@ Zipped CSV file from the [Japan Post website](http://www.post.japanpost.jp/zipco
   "neighbourhood_kanji":"南大井"
 }
 ```
-
-### POST /rebuild
-
-Download zipped CSV list of postal codes and update the data store. In production this URL should be accessible by administrators only.
-
-**Response** 200 OK
-
-**Errors** 500 Internal Server Error - Something went wrong while attempting to download, extract, parse or insert the data.

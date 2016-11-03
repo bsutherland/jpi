@@ -1,5 +1,9 @@
-GET     /:postalCode                controllers.JPI.lookup(postalCode: Integer)
+GET     /                   controllers.JPIWSController.index
 
-POST    /rebuild					controllers.JPI.buildCache()
+# Websocket interface
+GET     /chat               controllers.JPIWSController.chat
 
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+# HTTP API
+GET     /:postalCode        controllers.JPIController.address(postalCode: String)
+
+GET     /assets/*file       controllers.Assets.at(path="/public", file)

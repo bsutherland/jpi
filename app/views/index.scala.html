@@ -1,0 +1,33 @@
+@()(implicit request: RequestHeader)
+
+<!DOCTYPE html>
+
+<html ng-app="JPIApp">
+
+  <head>
+    <title>郵便番号検索</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="@routes.Assets.at("ui.css")">
+  </head>
+
+  <body ng-controller="AddressController as ctrl">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+    <script type="text/javascript" src="@routes.Assets.at("app_ws.js")"></script>
+
+    <div id="chat_area" ng-scroll-bottom="ctrl.messages">
+      <p ng-repeat="msg in ctrl.messages">
+        &lt;{{ msg.from }}&gt; {{ msg.text }}
+      </p>
+    </div>
+    <form ng-submit="ctrl.submit($event)" action="">
+      <div class="form-group">
+        <label for="msg-input">入力</label>
+        <input type="text" class="form-control" id="msg-input" ng-model="ctrl.msg" autocomplete="off"></input>
+        <input type="submit" id="submit" value="送信" class="hidden-submit"/>
+      </div>
+    </form>
+
+  </body>
+
+</html>

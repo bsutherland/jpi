@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+<html ng-app="JPIApp">
+
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="ui.css">
+	</head>
+
+	<body ng-controller="AddressController as ctrl">
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+		<script type="text/javascript" src="app_http.js"></script>
+
+		<form>
+			<div class="form-group">
+				<label for="postcode">郵便番号</label>
+				<input type="number" class="form-control" id="postcode" min="0" max="9999999" required ng-model="ctrl.postcode" ng-change="ctrl.lookup()"></input>
+			</div>
+			<div class="form-group">
+				<label for="address">住所</label>
+				<textarea rows="3" id="ctrl" class="form-control" ng-model="ctrl.address">
+			</div>
+		</form>
+
+	</body>
+
+</html>
