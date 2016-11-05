@@ -31,7 +31,7 @@ class JPIWSController @Inject() (
           case ValidPostcode(c) =>
             val addr = jpiService.getAddress(normalized)
             val reply = addr.map { a =>
-              s"〒${a.postalCode} ${a.prefectureKanji} ${a.municipalityKanji} ${a.neighbourhoodKanji}"
+              s"〒${a.postalCode} ${a.prefectureKanji}${a.municipalityKanji}${a.neighbourhoodKanji}"
             }.getOrElse("不明な郵便番号")
             out ! (reply)
           case _ => out ! ("無効な郵便番号")
