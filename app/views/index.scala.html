@@ -1,6 +1,7 @@
 @()(implicit request: Request[_])
 
 <!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <html ng-app="JPIApp">
 
@@ -15,11 +16,6 @@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
     <script type="text/javascript" src="@routes.Assets.at("app_ws.js")"></script>
 
-    <div id="chat_area" ng-scroll-bottom="ctrl.messages">
-      <p ng-repeat="msg in ctrl.messages">
-        &lt;{{ msg.from }}&gt; {{ msg.text }}
-      </p>
-    </div>
     <form ng-submit="ctrl.submit($event)" action="">
       <div class="form-group">
         <label for="msg-input">入力</label>
@@ -27,6 +23,12 @@
         <input type="submit" id="submit" value="送信" class="hidden-submit"/>
       </div>
     </form>
+
+    <div id="chat_area" ng-scroll-bottom="ctrl.messages">
+      <p ng-repeat="msg in ctrl.messages">
+        &lt;{{ msg.from }}&gt; {{ msg.text }}
+      </p>
+    </div>
 
   </body>
 
