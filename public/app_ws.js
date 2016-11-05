@@ -1,6 +1,6 @@
 (function() {
   angular.module('JPIApp', [])
-    .controller('AddressController', function($http, $scope) {
+    .controller('AddressController', function($http, $scope, $attrs) {
       let ctrl = this;
       // It would be better to initialize an empty array,
       // and send this message from the server on connect.
@@ -13,7 +13,7 @@
 
       }
 
-      ctrl.ws = new WebSocket(`ws://${window.location.hostname}:${window.location.port}/chat`);
+      ctrl.ws = new WebSocket($attrs.wsUrl);
       ctrl.ws.onmessage = function($event) {
         appendMessage('ChatBot', $event.data);
         $scope.$apply();  // http://jimhoskins.com/2012/12/17/angularjs-and-apply.html
